@@ -13,6 +13,11 @@ function DashboardComponent(props: any) {
     const { socket } = props;
 
     useEffect(() => {
+        const newData= BAR_CHART_DATA.map(item=> ({...item, isDashboard: true}))
+        socket.emit("count", newData);
+      }, []);
+
+    useEffect(() => {
         socket.on("count", (data: IData[]) => {
             console.log("data: ", data);
             setData(data);
