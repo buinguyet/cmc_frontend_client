@@ -47,11 +47,15 @@ function DashboardComponent(props: any) {
                 setData(onData);
             } else {
                 const newData = data.map((obj: IData) => {
-                    if (obj.label === onData.label) {
-                        return { ...obj, value: obj.value + 1 };
+                    const newObj= {...obj};
+
+                    if (newObj.label === onData.label) {
+                        return { ...newObj, value: newObj.value + 1 };
                     }
-                    return obj;
+                    
+                    return newObj;
                 });
+                
                 setData(newData);
             }
         })
