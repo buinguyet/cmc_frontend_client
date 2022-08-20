@@ -6,14 +6,7 @@ import type { IData } from "./types";
 function ClientComponent(props: any) {
   const { socket } = props;
 
-  // delay func
-  const delay = (ms:number) => new Promise(
-    resolve => setTimeout(resolve, ms)
-  );
-
   const handleClickColor = (async (colorData: IData) => {
-    // delay 5s, then emit data
-    await delay(5000);
     socket.emit("count", colorData);
   });
 

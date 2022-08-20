@@ -81,6 +81,7 @@ body{
   display: flex;
   flex-direction: column;
   border-radius: 20px;
+  margin: 40px;
 }
 
 .status__item--image{
