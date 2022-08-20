@@ -4,11 +4,13 @@ import ClientComponent from './components/ClientComponents';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import io from 'socket.io-client';
 import DashboardComponent from './components/DashboardComponent';
+import { INITIAL_DATA } from './components/constant';
 
 const socket = io("http://localhost:8000");
 
 function App() {
   // init socket
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isConnected, setIsConnected] = useState(socket.connected);
 
   useEffect(() => {
@@ -30,9 +32,9 @@ function App() {
     <div>
       <Router>
         <Routes>
-          <Route path='/' element={< ClientComponent socket={socket} />}></Route>
-          <Route path='/client' element={< ClientComponent socket={socket} />}></Route>
-          <Route path='/dashboard' element={< DashboardComponent socket={socket} />}></Route>
+          <Route path='/' element={< ClientComponent socket={socket} initialData={INITIAL_DATA} />}></Route>
+          <Route path='/client' element={< ClientComponent socket={socket} initialData={INITIAL_DATA} />}></Route>
+          <Route path='/dashboard' element={< DashboardComponent socket={socket} initialData={INITIAL_DATA} />}></Route>
         </Routes>
       </Router>
     </div>
