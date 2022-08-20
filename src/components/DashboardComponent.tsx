@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react"
-import type { IData } from "./types";
-import { BAR_CHART_DATA } from "./constant";
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -11,6 +9,10 @@ import {
     Legend,
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
+import { Socket } from 'socket.io-client';
+import { delay, getDataChart } from "./shared";
+import StatusComponent from "./StatusComponent";
+import type { IData } from "./types";
 
 ChartJS.register(
     CategoryScale,
@@ -30,27 +32,21 @@ export const options = {
     },
 };
 
-const initialDataChart = {
-    labels: BAR_CHART_DATA.map(item => item.label),
-    datasets: [
-        {
-            label: 'Color Count',
-            data: BAR_CHART_DATA.map(item => item.value),
-            backgroundColor: BAR_CHART_DATA.map(item => item.color),
-            borderWidth: 1,
-        },
-    ],
-};
+interface IDashboardComponent {
+    socket: Socket,
+    initialData: IData[],
+}
 
+function DashboardComponent(props: IDashboardComponent) {
+    const { socket, initialData } = props;
+    const initialDataChart = getDataChart('Color Count', initialData);
 
-function DashboardComponent(props: any) {
-    const { socket } = props;
-    const [data, setData] = useState(BAR_CHART_DATA);
+    const [data, setData] = useState(initialData);
     const [dataChart, setDataChart] = useState(initialDataChart);
 
     // when disconnect=> refresh data
     useEffect(() => {
-        socket.emit("count", BAR_CHART_DATA);
+        socket.emit("count", initialData);
     }, []);
 
     // on event count to update state
@@ -74,54 +70,26 @@ function DashboardComponent(props: any) {
         })
     }, [data, socket]);
 
-    // func delay
-    const delay = (ms: number) => new Promise(
-        resolve => setTimeout(resolve, ms)
-    );
-
-
+    // update chart after 5s
     useEffect(() => {
         const updateDataChart = async () => {
             await delay(5000);
 
-            const dataChart = {
-                labels: data.map(item => item.label),
-                datasets: [
-                    {
-                        label: 'Color Count',
-                        data: data.map(item => item.value),
-                        backgroundColor: data.map(item => item.color),
-                        borderWidth: 1,
-                    },
-                ],
-            };
+            const dataChart = getDataChart('Color Count', data);
 
             setDataChart(dataChart);
         }
 
-        updateDataChart()
+        updateDataChart();
     }, [data])
 
     return (
         <React.Fragment>
             <h1>Color Count Chart</h1>
-            <div style={{ display: "flex", justifyContent: "row" }}>
+            <div style={{ display: "flex", flexDirection: "row", justifyContent: 'center' }}>
                 {
                     data.map((item: IData, index: number) => (
-                        <div key={index} className='status__item' style={{
-                            backgroundColor: item.color
-                        }}>
-                            <div className='status__item--image' >
-
-                            </div>
-                            <div className='status__item--info'>
-                                <div className='status__item--info-title'>
-                                    <h3>{item.label}</h3>
-                                    <p>...</p>
-                                </div>
-                                <h2>{item.value} clicks</h2>
-                            </div>
-                        </div>
+                        <StatusComponent index={index} item={item} />
                     ))
                 }
             </div>

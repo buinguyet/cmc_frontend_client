@@ -1,10 +1,14 @@
 import React from "react"
-import { BAR_CHART_DATA } from "./constant";
+import { Socket } from 'socket.io-client';
 import type { IData } from "./types";
 
+interface ICLientComponent {
+  socket: Socket,
+  initialData: IData[],
+}
 
-function ClientComponent(props: any) {
-  const { socket } = props;
+function ClientComponent(props: ICLientComponent) {
+  const { socket, initialData } = props;
 
   const handleClickColor = (async (colorData: IData) => {
     socket.emit("count", colorData);
@@ -15,11 +19,15 @@ function ClientComponent(props: any) {
       <h1>Let count color!!!</h1>
       <div style={{ display: "flex", flexDirection: "column", justifyContent: 'center' }}>
         {
-          BAR_CHART_DATA.map((dataItem: IData, index: number) => {
-            return <button key={index} className="btn fourth" onClick={() => handleClickColor(dataItem)}
-              style={{ borderColor: dataItem.color, backgroundImage: `-webkit-linear-gradient(45deg, ${dataItem.color} 50%, transparent 50%)` }}>
+          initialData.map((dataItem: IData, index: number) => ((
+            <button key={index} className="btn fourth"
+              onClick={() => handleClickColor(dataItem)}
+              style={{
+                borderColor: dataItem.color,
+                backgroundImage: `-webkit-linear-gradient(45deg, ${dataItem.color} 50%, transparent 50%)`
+              }}>
               Click me!!</button>
-          })
+          )))
         }
 
       </div>
