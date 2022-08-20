@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import './App.css';
-import FetchComponent from './components/FetchComponents';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import ClientComponent from './components/ClientComponents';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import io from 'socket.io-client';
 import DashboardComponent from './components/DashboardComponent';
 
 const socket = io("http://localhost:8000");
 
 function App() {
+  // init socket
   const [isConnected, setIsConnected] = useState(socket.connected);
 
   useEffect(() => {
@@ -26,27 +27,13 @@ function App() {
   }, []);
 
   return (
-    <div className='container'>
+    <div>
       <Router>
-        {/* <div> */}
-          <ul>
-            <li>
-              <Link to="/">Client</Link>
-            </li>
-            <li>
-              <Link to="/client">Client</Link>
-            </li>
-            <li>
-              <Link to="/dashboard">Dashboard</Link>
-            </li>
-          </ul>
-
-          <Routes>
-            <Route path='/' element={< FetchComponent socket={socket} />}></Route>
-            <Route path='/client' element={< FetchComponent socket={socket} />}></Route>
-            <Route path='/dashboard' element={< DashboardComponent socket={socket} />}></Route>
-          </Routes>
-        {/* </div> */}
+        <Routes>
+          <Route path='/' element={< ClientComponent socket={socket} />}></Route>
+          <Route path='/client' element={< ClientComponent socket={socket} />}></Route>
+          <Route path='/dashboard' element={< DashboardComponent socket={socket} />}></Route>
+        </Routes>
       </Router>
     </div>
   )
